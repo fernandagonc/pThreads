@@ -1,1 +1,2 @@
-# pThreads
+Trabalho da disciplina de Sistemas Operacionais - DCC - UFMG em 2020/2
+Uso de recursos de threads POSIX (pthreads) -- em particular, mutexes (pthread_mutex_t) e  variáveis de condição (pthread_cond_t).
