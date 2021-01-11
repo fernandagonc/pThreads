@@ -16,6 +16,19 @@ void * monitor(void *v){
 
 }
 
+void iniciarAcoesPersonagem (Personagem personagem) {
+    
+    while(personagem.nroVezesUsoForno > 0) {
+    
+        personagem.esquentarAlgo();
+    
+        personagem.comer();
+    
+        personagem.trabalhar();
+    }
+
+};
+
 void inicializarPersonagens(int nroVezesUsoForno, Personagem array[]){
     Personagem* novo;
     string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};

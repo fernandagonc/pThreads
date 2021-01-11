@@ -2,7 +2,8 @@
 #define PERSONAGEM_H
 
 #include <iostream>
-#include<string>
+#include <string>
+#include <pthread.h>
 
 using std::string;
 
@@ -12,10 +13,14 @@ class Personagem{
         std::string nome;
         int nroVezesUsoForno;
         bool isCasal;
+        pthread_t id; 
 
         Personagem();
         Personagem(string nome, bool isCasal, int nroVezesUsoForno);
-
+        
+        void esquentarAlgo();
+        void comer();
+        void trabalhar();
 };
 
 
