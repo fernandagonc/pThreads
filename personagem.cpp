@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <random>
 
-#include "character.hpp"
+#include "personagem.hpp"
 
 using namespace std;
 

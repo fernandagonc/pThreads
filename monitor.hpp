@@ -1,7 +1,7 @@
 #ifndef MONITOR_H
 #define MONITOR_H
 
-#include "character.hpp"
+#include "personagem.hpp"
 #include <pthread.h>
 
 class Monitor{

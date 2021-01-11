@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include "character.hpp"
+#include "personagem.hpp"
 #include "monitor.hpp"
 
 using namespace std;
