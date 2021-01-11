@@ -8,20 +8,28 @@ pthread_t threads[2];
 int counter; 
 pthread_mutex_t lock; 
 
-void * monitor(void *v){
+void * threadHandler (void * args){
     pthread_mutex_lock(&lock); 
 
     //verificar prioridades e usar forno
     pthread_mutex_unlock(&lock); 
-
+    return 0; 
 }
 
 void iniciarAcoesPersonagem (Personagem personagem) {
+    int status;
+
+    status = pthread_create(&threads[0], NULL, threadHandler, (void *) &personagem.nome[0] );
+    if (status < 0) {
+        cout << "Erro ao criar a thread.";
+    }
+    cout << "Thread do personagem " << personagem.nome << " criada com sucesso! \n";
     
     while(personagem.nroVezesUsoForno > 0) {
     
         personagem.esquentarAlgo();
-    
+        personagem.nroVezesUsoForno = personagem.nroVezesUsoForno - 1;
+
         personagem.comer();
     
         personagem.trabalhar();
@@ -61,16 +69,8 @@ int main(int argc, char *argv[]){
     int nroVezesUsoForno = atoi(argv[1]);
     Personagem personagens[8]; 
     inicializarPersonagens(nroVezesUsoForno, personagens);
+    iniciarAcoesPersonagem(personagens[0]);
 
-    int status;
-    int args;
-    for (int i=0; i < 2; i ++){
-        status = pthread_create(&threads[i], NULL, monitor, NULL);
-        if (status < 0) {
-            cout << "Erro ao criar a thread.";
-        }
-        cout << "Thread criada com sucesso! \n";
-    }
     
 
     pthread_join(threads[0], NULL); 
