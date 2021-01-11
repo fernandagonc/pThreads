@@ -1,55 +1,62 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include "character.hpp"
+#include "monitor.hpp"
 
 using namespace std;
-pthread_t threads[2]; 
-int counter; 
-pthread_mutex_t lock; 
 
-void * threadHandler (void * args){
-    pthread_mutex_lock(&lock); 
+Monitor forno;
+Personagem personagens[8]; 
 
-    //verificar prioridades e usar forno
-    pthread_mutex_unlock(&lock); 
-    return 0; 
-}
 
-void iniciarAcoesPersonagem (Personagem personagem) {
-    int status;
 
-    status = pthread_create(&threads[0], NULL, threadHandler, (void *) &personagem.nome[0] );
-    if (status < 0) {
-        cout << "Erro ao criar a thread.";
-    }
-    cout << "Thread do personagem " << personagem.nome << " criada com sucesso! \n";
-    
-    while(personagem.nroVezesUsoForno > 0) {
-    
+void * threadHandler (void * p){
+    Personagem personagem;
+    personagem.nome = (char *) p;
+
+    while(true) {
+        
         personagem.esquentarAlgo();
-        personagem.nroVezesUsoForno = personagem.nroVezesUsoForno - 1;
 
         personagem.comer();
     
         personagem.trabalhar();
     }
 
+
+    return 0; 
+}
+
+
+void criarThread (Personagem personagem) {
+    int status;
+    Personagem * addr = &personagem;
+
+    status = pthread_create(&forno.threads[personagem.id], NULL, threadHandler, (void *) &personagem.nome[0] );
+    if (status < 0) {
+        cout << "Erro ao criar a thread.";
+    }
+    cout << "Thread do personagem " << personagem.nome << " criada com sucesso! \n";
+    
+ 
 };
 
-void inicializarPersonagens(int nroVezesUsoForno, Personagem array[]){
+void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
     Personagem* novo;
-    string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
+    char nomes[8][12] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
 
     for(int i = 0; i < 8; i++){
-        if (i > 0 && i <= 5)
-            novo = new Personagem(nomes[i], true, nroVezesUsoForno);
+        if (i >= 0 && i <= 5){
+            novo = new Personagem(nomes[i], true, nroVezesUsoForno, i);
+        }
+          
         else 
-            novo = new Personagem(nomes[i], false, nroVezesUsoForno);
+            novo = new Personagem(nomes[i], false, nroVezesUsoForno, i);
 
         
-        array[i] = *novo;
-
+        personagens[i] = *novo;
     }
 
 }
@@ -61,23 +68,18 @@ int main(int argc, char *argv[]){
         exit(1);
     }
 
-    if (pthread_mutex_init(&lock, NULL) != 0) { 
-        cout << "\n Inicialização mutex falhou.\n"; 
-        return 1; 
-    } 
-
     int nroVezesUsoForno = atoi(argv[1]);
-    Personagem personagens[8]; 
+    Personagem personagens[8];
     inicializarPersonagens(nroVezesUsoForno, personagens);
-    iniciarAcoesPersonagem(personagens[0]);
+    criarThread(personagens[0]);
 
     
 
-    pthread_join(threads[0], NULL); 
-    pthread_join(threads[1], NULL);
+    // pthread_join(threads[0], NULL); 
+    // pthread_join(threads[1], NULL);
 
-    pthread_mutex_destroy(&lock); 
+    // pthread_mutex_destroy(&lock); 
   
 
-
+    return 0;
 }
