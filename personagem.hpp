@@ -10,17 +10,18 @@ using std::string;
 class Personagem{
 
     public: 
-        char * nome;
+        string nome;
         int nroVezesUsoForno;
         bool isCasal;
         pthread_t id; 
 
         Personagem();
-        Personagem(char * nome, bool isCasal, int nroVezesUsoForno, pthread_t id);
+        Personagem(string nome, bool isCasal, int nroVezesUsoForno, pthread_t id);
         
         void esquentarAlgo();
         void comer();
         void trabalhar();
+        void printDadosPersonagem();
 };
 
 

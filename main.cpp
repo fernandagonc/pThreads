@@ -2,20 +2,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
+#include <iostream>
 #include "personagem.hpp"
 #include "monitor.hpp"
 
 using namespace std;
 
 Monitor forno;
-Personagem personagens[8]; 
 
 
+void * threadHandler (void * pointer){
 
-void * threadHandler (void * p){
-    Personagem personagem;
-    personagem.nome = (char *) p;
-
+    Personagem * dados = (Personagem *)pointer;
+    Personagem personagem(dados->nome, dados->isCasal, dados->nroVezesUsoForno, dados->id);
+    
     while(true) {
         
         personagem.esquentarAlgo();
@@ -32,9 +32,11 @@ void * threadHandler (void * p){
 
 void criarThread (Personagem personagem) {
     int status;
-    Personagem * addr = &personagem;
+    Personagem p = personagem;
+    Personagem * pointer;
+    pointer = &p;
 
-    status = pthread_create(&forno.threads[personagem.id], NULL, threadHandler, (void *) &personagem.nome[0] );
+    status = pthread_create(&forno.threads[personagem.id], NULL, threadHandler, (void *) pointer);
     if (status < 0) {
         cout << "Erro ao criar a thread.";
     }
@@ -45,7 +47,7 @@ void criarThread (Personagem personagem) {
 
 void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
     Personagem* novo;
-    char nomes[8][12] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
+    string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
 
     for(int i = 0; i < 8; i++){
         if (i >= 0 && i <= 5){
@@ -71,6 +73,7 @@ int main(int argc, char *argv[]){
     int nroVezesUsoForno = atoi(argv[1]);
     Personagem personagens[8];
     inicializarPersonagens(nroVezesUsoForno, personagens);
+
     criarThread(personagens[0]);
 
     

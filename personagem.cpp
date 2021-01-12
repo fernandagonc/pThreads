@@ -15,7 +15,7 @@ uniform_int_distribution<> distr(3, 6); // define the range
 
 Personagem::Personagem(){};
 
-Personagem::Personagem(char * nome, bool isCasal, int nroVezesUsoForno, pthread_t id){
+Personagem::Personagem(string nome, bool isCasal, int nroVezesUsoForno, pthread_t id){
     this->nroVezesUsoForno = nroVezesUsoForno;
     this->nome = nome;
     this->isCasal = isCasal;
@@ -35,4 +35,10 @@ void Personagem::comer() {
 void Personagem::trabalhar() {
     cout << this->nome << " voltou para o trabalho \n";
     sleep(distr(gen));
+}
+
+void Personagem::printDadosPersonagem(){
+
+    cout << this->nome << " " << this->id << " " << this->isCasal << "\n";
+
 }
