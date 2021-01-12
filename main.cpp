@@ -16,11 +16,11 @@ void * threadHandler (void * pointer){
     Personagem * dados = (Personagem *)pointer;
     Personagem personagem(dados->nome, dados->isCasal, dados->nroVezesUsoForno, dados->id);
 
-    while(true) {
+    while(personagem.nroVezesUsoForno > 0) {
         personagem.esquentarAlgo();
 
         personagem.comer();
-    
+        personagem.nroVezesUsoForno = personagem.nroVezesUsoForno - 1;
         personagem.trabalhar();
     }
 
@@ -39,10 +39,10 @@ void criarThread (Personagem personagem) {
     if (status < 0) {
         cout << "Erro ao criar a thread.";
     }
-    pthread_join(forno.threads[personagem.id], NULL); 
 
     cout << "Thread do personagem " << personagem.nome << " criada com sucesso! \n";
-    
+    pthread_join(forno.threads[personagem.id], NULL); 
+
  
 };
 
