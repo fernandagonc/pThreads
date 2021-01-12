@@ -39,6 +39,6 @@ void Personagem::trabalhar() {
 
 void Personagem::printDadosPersonagem(){
 
-    cout << this->nome << " " << this->id << " " << this->isCasal << "\n";
+    cout << this->nome << " " << this->id << " " << this->isCasal << " usoForno: " << this->nroVezesUsoForno << " \n";
 
 }
