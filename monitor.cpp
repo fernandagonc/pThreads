@@ -6,9 +6,19 @@ using namespace std;
 
 Monitor::Monitor() {
 
+    this->lock = PTHREAD_MUTEX_INITIALIZER;
+    this->condicao = PTHREAD_COND_INITIALIZER;
+    this->controleThreadsCriadas = 0;
+
     if (pthread_mutex_init(&this->lock, NULL) != 0) { 
         cout << "\n Inicialização mutex falhou.\n"; 
     } 
+
+    pthread_mutex_lock(&this->lock); 
+
+// while(!condition){
+//     pthread_cond_wait(&condition, &mutex); //wait for the condition
+// }
 
 
 };

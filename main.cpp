@@ -5,11 +5,11 @@
 #include <iostream>
 #include "personagem.hpp"
 #include "monitor.hpp"
+#include <unistd.h>
 
 using namespace std;
 
 Monitor forno;
-
 
 void * threadHandler (void * pointer){
 
@@ -17,8 +17,9 @@ void * threadHandler (void * pointer){
     Personagem personagem(dados->nome, dados->isCasal, dados->nroVezesUsoForno, dados->id);
 
     while(personagem.nroVezesUsoForno > 0) {
+        forno.esperar(personagem);
         personagem.esquentarAlgo();
-
+        forno.liberar(personagem);
         personagem.comer();
         personagem.nroVezesUsoForno = personagem.nroVezesUsoForno - 1;
         personagem.trabalhar();
@@ -35,14 +36,14 @@ void criarThread (Personagem personagem) {
     Personagem * pointer;
     pointer = &p;
 
-    status = pthread_create(&forno.threads[personagem.id], NULL, threadHandler, (void *) pointer);
+    status = pthread_create(&forno.threads[personagem.id], NULL, &threadHandler, (void *) pointer);
     if (status < 0) {
         cout << "Erro ao criar a thread.";
     }
 
     cout << "Thread do personagem " << personagem.nome << " criada com sucesso! \n";
-    pthread_join(forno.threads[personagem.id], NULL); 
-
+    //pthread_join(forno.threads[personagem.id], NULL); 
+    forno.controleThreadsCriadas++;
  
 };
 
@@ -75,8 +76,13 @@ int main(int argc, char *argv[]){
     Personagem personagens[8];
     inicializarPersonagens(nroVezesUsoForno, personagens);
     criarThread(personagens[0]);
+    criarThread(personagens[1]);
 
-    
+    if(forno.controleThreadsCriadas == 2){
+        pthread_mutex_unlock(&forno.lock); 
+    }
+      
+
 
 
     // pthread_mutex_destroy(&lock); 

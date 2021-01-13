@@ -9,6 +9,9 @@ class Monitor{
     public: 
         pthread_t threads[8]; 
         pthread_mutex_t lock; 
+        pthread_cond_t condicao; 
+        int controleThreadsCriadas;
+
 
         Monitor();        
         void esperar(Personagem p);
