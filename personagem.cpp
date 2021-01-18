@@ -28,7 +28,7 @@ void Personagem::esquentarAlgo() {
 }
 
 void Personagem::comer() {
-    cout << this->nome << " está comendo \n";
+    cout << this->nome << " vai comer \n";
     sleep(distr(gen));
 }
 
@@ -38,7 +38,5 @@ void Personagem::trabalhar() {
 }
 
 void Personagem::printDadosPersonagem(){
-
     cout << this->nome << " " << this->id << " " << this->isCasal << " usoForno: " << this->nroVezesUsoForno << " \n";
-
 }

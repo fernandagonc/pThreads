@@ -1,8 +1,13 @@
 #include "monitor.hpp"
 #include <iostream>
 #include <stdlib.h>
+#include <list>
+
 
 using namespace std;
+
+list<Personagem> fila = {};
+int livre = 1;
 
 Monitor::Monitor() {
 
@@ -14,25 +19,33 @@ Monitor::Monitor() {
         cout << "\n Inicialização mutex falhou.\n"; 
     } 
 
-    pthread_mutex_lock(&this->lock); 
-
-// while(!condition){
-//     pthread_cond_wait(&condition, &mutex); //wait for the condition
-// }
-
 
 };
+
+void Monitor::printFila(){
+    for (auto const& i: fila) {
+        cout << i.nome << ", ";
+    }
+    cout << "\n";
+}
 
 void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
     pthread_mutex_lock(&this->lock); 
+
+    cout << "waiting";
+    pthread_cond_wait(&this->condicao, &this->lock);
+    cout << "liberado";
 };
 
 void Monitor::liberar(Personagem p){
-    pthread_mutex_unlock(&lock); 
-    cout << p.nome << " vai comer \n";
+    p.comer();
+ 
+    pthread_cond_signal(&this->condicao);
+    pthread_mutex_unlock(&this->lock); 
 };
 
 void Monitor::verificar(){
     cout << "Verificando deadlock \n";
+    return;
 };

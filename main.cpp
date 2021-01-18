@@ -15,7 +15,7 @@ void * threadHandler (void * pointer){
 
     Personagem * dados = (Personagem *)pointer;
     Personagem personagem(dados->nome, dados->isCasal, dados->nroVezesUsoForno, dados->id);
-
+    personagem.printDadosPersonagem();
     while(personagem.nroVezesUsoForno > 0) {
         forno.esperar(personagem);
         personagem.esquentarAlgo();
@@ -30,39 +30,46 @@ void * threadHandler (void * pointer){
 }
 
 
-void criarThread (Personagem personagem) {
+pthread_t criarThread (Personagem personagem) {
     int status;
     Personagem p = personagem;
     Personagem * pointer;
     pointer = &p;
+    pthread_t id;
 
-    status = pthread_create(&forno.threads[personagem.id], NULL, &threadHandler, (void *) pointer);
+    status = pthread_create(&id, NULL, &threadHandler, (void *) pointer);
     if (status < 0) {
         cout << "Erro ao criar a thread.";
     }
 
     cout << "Thread do personagem " << personagem.nome << " criada com sucesso! \n";
-    //pthread_join(forno.threads[personagem.id], NULL); 
     forno.controleThreadsCriadas++;
  
+    return id;
 };
 
 void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
-    Personagem* novo;
+    Personagem novo;
     string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
 
     for(int i = 0; i < 8; i++){
         if (i >= 0 && i <= 5){
-            novo = new Personagem(nomes[i], true, nroVezesUsoForno, i);
+            novo = Personagem(nomes[i], true, nroVezesUsoForno, i);
         }
           
         else 
-            novo = new Personagem(nomes[i], false, nroVezesUsoForno, i);
+            novo = Personagem(nomes[i], false, nroVezesUsoForno, i);
 
         
-        personagens[i] = *novo;
+        personagens[i] = novo;
     }
 
+}
+
+void joinThread(pthread_t id){
+    if (pthread_join(id, NULL) < 0) {
+        cout << "Erro ao dar join na thread";
+    }; 
 }
 
 int main(int argc, char *argv[]){
@@ -75,18 +82,19 @@ int main(int argc, char *argv[]){
     int nroVezesUsoForno = atoi(argv[1]);
     Personagem personagens[8];
     inicializarPersonagens(nroVezesUsoForno, personagens);
-    criarThread(personagens[0]);
-    criarThread(personagens[1]);
+    
+    // for(int i = 0; i < 8; i++){
+    //     personagens[i].printDadosPersonagem();
+    // }
+    
+    personagens[0].id = criarThread(personagens[0]);
+    personagens[5].id = criarThread(personagens[5]);
 
-    if(forno.controleThreadsCriadas == 2){
-        pthread_mutex_unlock(&forno.lock); 
-    }
-      
+    sleep(20);
 
+    joinThread(personagens[0].id);
+    joinThread(personagens[5].id);
 
-
-    // pthread_mutex_destroy(&lock); 
-  
 
     return 0;
 }
