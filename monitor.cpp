@@ -1,11 +1,14 @@
 #include "monitor.hpp"
 #include <iostream>
 #include <stdlib.h>
-
+#include <list>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
 int livre = 1;
+std::list<string> fila;
 
 Monitor::Monitor() {
 
@@ -28,9 +31,63 @@ void printFila(list <string> g)
     cout << '\n'; 
 } 
 
+
+list<string>::iterator posicaoPersonagemNaFila(string nome){
+    auto it = find(fila.begin(), fila.end(), nome);
+    return it;
+}
+
+int adicionarPersonagemNaFila(string nome){
+
+    if (nome == "Sheldon"){
+        auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+
+        if(posicaoLeonard == fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoLeonard, nome); // testar se insere depois
+        }
+
+    }
+    else if(nome == "Howard"){
+        auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+
+        if(posicaoSheldon ==  fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoSheldon, nome);
+        }
+    }
+    else if(nome == "Leonard"){
+        auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+
+        if(posicaoHoward ==  fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoHoward, nome);
+        }
+    }
+    else if(nome == "Stuart"){
+        auto posicaoKripke = posicaoPersonagemNaFila("Kripke");
+
+        if(posicaoKripke ==  fila.end()){
+            fila.push_back(nome);
+        }
+        else{
+            fila.insert(posicaoKripke, nome);
+        }
+
+    }
+    else if(nome == "Kripke"){
+        fila.push_back(nome);
+    }
+}
+
 void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
-    this->fila.push_back(p.nome);
     
     //printFila(this->fila);
 
@@ -50,11 +107,11 @@ void Monitor::liberar(Personagem p){
     
     
     cout << p.nome << " vai comer \n";
-    this->fila.pop_front();
+    fila.pop_front();
     // showlist(this->fila);
     pthread_mutex_unlock(&this->lock); 
 
-    if(this->fila.front() == p.nome)
+    if(fila.front() == p.nome)
         pthread_cond_signal(&this->condicao);
 };
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
+#include <thread>
 #include <iostream>
 #include "personagem.hpp"
 #include "monitor.hpp"
@@ -42,7 +43,7 @@ pthread_t criarThread (Personagem personagem) {
         return -1;
     }
 
-    cout << "Thread de " << personagem.nome << " criada com sucesso! \n";
+    cout << "Thread de " << personagem.nome << " id: " << id << " criada com sucesso! \n";
  
     return id;
 };
@@ -84,10 +85,21 @@ int main(int argc, char *argv[]){
     Personagem personagens[8];
     inicializarPersonagens(nroVezesUsoForno, personagens);
     
-    personagens[1].id = criarThread(personagens[0]);
-    sleep(1);
-    personagens[6].id = criarThread(personagens[5]);
-    sleep(1);
+    personagens[3].id = criarThread(personagens[3]);
+    cout << "id main ANTES: " << personagens[3].id << "\n";
+
+    //this_thread::sleep_for(1000ms);
+    cout << "id main DEṔOIS: " << personagens[3].id << "\n";
+
+    personagens[1].id = criarThread(personagens[1]);
+
+ 
+    cout << "id main ANTES: " << personagens[1].id << "\n";
+    //this_thread::sleep_for(1000ms);
+    cout << "id main DEṔOIS: " << personagens[1].id << "\n";
+
+    personagens[6].id = criarThread(personagens[6]);
+    //this_thread::sleep_for(1000ms);
 
     // for(int i=0; i < 8; i++){
     //     personagens[i].id = criarThread(personagens[0]);
@@ -99,6 +111,8 @@ int main(int argc, char *argv[]){
 
     // }
     joinThread(personagens[1].id);
+    joinThread(personagens[3].id);
+
     joinThread(personagens[6].id);
 
 
