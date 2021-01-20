@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int livre = 1;
+bool isFornoLivre = true;
 std::list<string> fila;
 
 Monitor::Monitor() {
@@ -37,7 +37,7 @@ list<string>::iterator posicaoPersonagemNaFila(string nome){
     return it;
 }
 
-int adicionarPersonagemNaFila(string nome){
+void adicionarPersonagemNaFila(string nome){
 
     if (nome == "Sheldon"){
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
@@ -49,7 +49,7 @@ int adicionarPersonagemNaFila(string nome){
             fila.push_front(nome);
         }
         else{
-            fila.insert(++posicaoLeonard, nome); // testar se insere depois
+            fila.insert(++posicaoLeonard, nome); 
         }
 
     }
@@ -70,6 +70,8 @@ int adicionarPersonagemNaFila(string nome){
     else if(nome == "Leonard"){
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
         auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+
         if(posicaoAmy != fila.end()){
             fila.insert(++posicaoPenny, nome);
         }
@@ -83,7 +85,7 @@ int adicionarPersonagemNaFila(string nome){
     else if(nome == "Stuart"){
         auto posicaoKripke = posicaoPersonagemNaFila("Kripke");
 
-        if(posicaoKripke ==  fila.end()){
+        if(posicaoKripke == fila.end()){
             fila.push_back(nome);
         }
         else{
@@ -99,17 +101,17 @@ int adicionarPersonagemNaFila(string nome){
 void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
     
-    //printFila(this->fila);
+    adicionarPersonagemNaFila(p.nome);
+    cout << "LISTA: ";
+    printFila(fila);
 
     if (pthread_mutex_lock(&this->lock) != 0) {
         cout << "pthread_mutex_lock error";
         exit(2);
     }
 
-    //cout << "waiting  ";
     while(fila.front() != p.nome)
         pthread_cond_wait(&this->condicao, &this->lock);
-    //cout << "    liberado \n ";
 
 };
 
@@ -117,8 +119,10 @@ void Monitor::liberar(Personagem p){
     
     
     cout << p.nome << " vai comer \n";
-    fila.pop_front();
-    // showlist(this->fila);
+    fila.remove(p.nome);
+    cout << "LISTA: ";
+    printFila(fila);
+
     pthread_mutex_unlock(&this->lock); 
 
     if(fila.front() == p.nome)
