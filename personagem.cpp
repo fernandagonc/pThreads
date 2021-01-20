@@ -28,7 +28,7 @@ void Personagem::esquentarAlgo() {
 }
 
 void Personagem::comer() {
-    cout << this->nome << " vai comer \n";
+    cout << this->nome << " está comendo\n";
     sleep(distr(gen));
 }
 

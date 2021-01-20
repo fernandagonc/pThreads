@@ -1,12 +1,10 @@
 #include "monitor.hpp"
 #include <iostream>
 #include <stdlib.h>
-#include <list>
 
 
 using namespace std;
 
-list<Personagem> fila = {};
 int livre = 1;
 
 Monitor::Monitor() {
@@ -22,27 +20,42 @@ Monitor::Monitor() {
 
 };
 
-void Monitor::printFila(){
-    for (auto const& i: fila) {
-        cout << i.nome << ", ";
-    }
-    cout << "\n";
-}
+void printFila(list <string> g) 
+{ 
+    list <string> :: iterator it; 
+    for(it = g.begin(); it != g.end(); ++it) 
+        cout << *it  << ", "; 
+    cout << '\n'; 
+} 
 
 void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
-    pthread_mutex_lock(&this->lock); 
+    this->fila.push_back(p.nome);
+    
+    //printFila(this->fila);
 
-    cout << "waiting";
-    pthread_cond_wait(&this->condicao, &this->lock);
-    cout << "liberado";
+    if (pthread_mutex_lock(&this->lock) != 0) {
+        cout << "pthread_mutex_lock error";
+        exit(2);
+    }
+
+    //cout << "waiting  ";
+    while(fila.front() != p.nome)
+        pthread_cond_wait(&this->condicao, &this->lock);
+    //cout << "    liberado \n ";
+
 };
 
 void Monitor::liberar(Personagem p){
-    p.comer();
- 
-    pthread_cond_signal(&this->condicao);
+    
+    
+    cout << p.nome << " vai comer \n";
+    this->fila.pop_front();
+    // showlist(this->fila);
     pthread_mutex_unlock(&this->lock); 
+
+    if(this->fila.front() == p.nome)
+        pthread_cond_signal(&this->condicao);
 };
 
 void Monitor::verificar(){
