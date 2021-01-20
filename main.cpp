@@ -76,7 +76,7 @@ void joinThread(pthread_t id){
 
 int main(int argc, char *argv[]){
     
-    if(argc < 1){
+    if(argc < 2){
         cout << "Especifique número de vezes para os personagens usarem o forno.";
         exit(1);
     }

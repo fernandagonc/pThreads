@@ -41,8 +41,11 @@ int adicionarPersonagemNaFila(string nome){
 
     if (nome == "Sheldon"){
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
-
-        if(posicaoLeonard == fila.end()){
+        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+        if(posicaoAmy != fila.end()){
+            fila.insert(++posicaoAmy, nome);
+        }
+        else if(posicaoLeonard == fila.end()){
             fila.push_front(nome);
         }
         else{
@@ -52,8 +55,12 @@ int adicionarPersonagemNaFila(string nome){
     }
     else if(nome == "Howard"){
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+        auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
 
-        if(posicaoSheldon ==  fila.end()){
+        if(posicaoBernadette != fila.end()){
+            fila.insert(++posicaoBernadette, nome);
+        }
+        else if(posicaoSheldon ==  fila.end()){
             fila.push_front(nome);
         }
         else{
@@ -62,8 +69,11 @@ int adicionarPersonagemNaFila(string nome){
     }
     else if(nome == "Leonard"){
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
-
-        if(posicaoHoward ==  fila.end()){
+        auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+        if(posicaoAmy != fila.end()){
+            fila.insert(++posicaoPenny, nome);
+        }
+        else if(posicaoHoward ==  fila.end()){
             fila.push_front(nome);
         }
         else{
