@@ -11,6 +11,7 @@
 using namespace std;
 
 Monitor forno;
+bool threadsPersonagensAtivas = true;
 
 void * threadHandler (void * pointer){
 
@@ -70,8 +71,17 @@ void joinThread(pthread_t id){
         return; 
     }; 
 
-    cout << "Thread " << id << " com join \n";
+    cout << "Thread " << id << " finalizada \n";
     return;
+}
+
+void * threadRaj (void * pointer){
+
+    while(threadsPersonagensAtivas){
+        sleep(5);
+        forno.verificar();
+    }
+
 }
 
 int main(int argc, char *argv[]){
@@ -85,6 +95,19 @@ int main(int argc, char *argv[]){
     Personagem personagens[8];
     inicializarPersonagens(nroVezesUsoForno, personagens);
     
+    pthread_t raj;
+    int pointer = 0;
+    int statusRaj = pthread_create(&raj, NULL, &threadRaj, NULL);
+
+    if (statusRaj < 0) {
+        cout << "Erro ao criar a thread do Raj.\n";
+        return -1;
+    }
+    else{
+        cout << "Thread do Raj criada.\n";
+        sleep(0.5);
+    }
+
     personagens[0].id = criarThread(personagens[0]);
    // sleep(1);
     //this_thread::sleep_for(1000ms);
@@ -108,10 +131,14 @@ int main(int argc, char *argv[]){
     //     joinThread(personagens[i].id);
 
     // }
+
     joinThread(personagens[0].id);
     joinThread(personagens[4].id);
     joinThread(personagens[6].id);
     joinThread(personagens[7].id);
+
+    threadsPersonagensAtivas = false;
+    joinThread(raj);
 
 
     return 0;
