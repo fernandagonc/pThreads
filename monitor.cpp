@@ -96,6 +96,9 @@ void adicionarPersonagemNaFila(string nome){
     else if(nome == "Kripke"){
         fila.push_back(nome);
     }
+    else{
+        fila.push_back(nome);
+    }
 }
 
 void Monitor::esperar(Personagem p){
@@ -129,7 +132,55 @@ void Monitor::liberar(Personagem p){
         pthread_cond_signal(&this->condicao);
 };
 
+bool deadLockPersonagensMasculinos(){
+    auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+    auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+    auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+
+    if(posicaoSheldon != fila.end() && posicaoLeonard != fila.end() && posicaoHoward != fila.end()){
+        return true;
+    }
+    
+    return false;
+    
+
+}
+
+bool deadLockPersonagensFemininos(){
+    auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+    auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+    auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
+
+    if(posicaoAmy != fila.end() && posicaoPenny != fila.end() && posicaoBernadette != fila.end()){
+        return true;
+    }
+    
+    return false;
+    
+
+}
+
 void Monitor::verificar(){
-    cout << "Verificando deadlock \n";
+
+    cout << "Verificando: ";
+
+    bool deadLockFeminino = deadLockPersonagensFemininos();
+    bool deadlockMasculino = deadLockPersonagensMasculinos();
+
+    if(deadLockFeminino && deadlockMasculino){
+        cout << "Deadlock casais \n";
+        //liberar um dos casais aleatoriamente
+    }
+    else if (deadLockFeminino){
+        cout << "Deadlock feminino \n";
+        //liberar uma das mulheres
+    }
+    else if (deadlockMasculino){
+        cout << "Deadlock masculino \n";
+        //liberar um dos homens
+    }
+    else
+        cout << "Sem deadlocks \n";
+
     return;
 };

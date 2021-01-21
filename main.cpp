@@ -96,7 +96,6 @@ int main(int argc, char *argv[]){
     inicializarPersonagens(nroVezesUsoForno, personagens);
     
     pthread_t raj;
-    int pointer = 0;
     int statusRaj = pthread_create(&raj, NULL, &threadRaj, NULL);
 
     if (statusRaj < 0) {
@@ -108,34 +107,25 @@ int main(int argc, char *argv[]){
         sleep(0.5);
     }
 
-    personagens[0].id = criarThread(personagens[0]);
-   // sleep(1);
-    //this_thread::sleep_for(1000ms);
-   
-    personagens[4].id = criarThread(personagens[4]);
-    //sleep(1);
-    personagens[6].id = criarThread(personagens[6]);
-    personagens[7].id = criarThread(personagens[7]);
-    //sleep(1);
+    // personagens[0].id = criarThread(personagens[0]);
+    // personagens[4].id = criarThread(personagens[4]);
+    // personagens[6].id = criarThread(personagens[6]);
+    // personagens[7].id = criarThread(personagens[7]);
+    
+    for(int i=0; i < 8; i++){
+        personagens[i].id = criarThread(personagens[i]);
+        //sleep(1);
+    }
 
+    for(int i=0; i < 8; i++){
+        joinThread(personagens[i].id);
 
-    //sleep(1);
+    }
 
-
-    // for(int i=0; i < 8; i++){
-    //     personagens[i].id = criarThread(personagens[0]);
-    //     sleep(1);
-    // }
-
-    // for(int i=0; i < 8; i++){
-    //     joinThread(personagens[i].id);
-
-    // }
-
-    joinThread(personagens[0].id);
-    joinThread(personagens[4].id);
-    joinThread(personagens[6].id);
-    joinThread(personagens[7].id);
+    // joinThread(personagens[0].id);
+    // joinThread(personagens[4].id);
+    // joinThread(personagens[6].id);
+    // joinThread(personagens[7].id);
 
     threadsPersonagensAtivas = false;
     joinThread(raj);
