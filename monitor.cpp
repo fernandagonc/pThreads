@@ -4,7 +4,7 @@
 #include <list>
 #include <string>
 #include <algorithm>
-
+#include <iterator>
 using namespace std;
 
 bool isFornoLivre = true;
@@ -37,27 +37,67 @@ list<string>::iterator posicaoPersonagemNaFila(string nome){
     return it;
 }
 
+void passarPrimeiroDoCasalNaFrente(string nome){
+    fila.remove(nome);
+    fila.push_front(nome);
+}
+
 void adicionarPersonagemNaFila(string nome){
+    auto inicioFila = fila.begin();
 
     if (nome == "Sheldon"){
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+        auto posicaoPenny = posicaoPersonagemNaFila("Penny");
         auto posicaoAmy = posicaoPersonagemNaFila("Amy");
-        if(posicaoAmy != fila.end()){
-            fila.insert(++posicaoAmy, nome);
-        }
-        else if(posicaoLeonard == fila.end()){
-            fila.push_front(nome);
+
+        bool pennyNaFila = posicaoPenny != fila.end();
+        bool leonardNaFila = posicaoLeonard != fila.end();
+        bool amyNaFila = posicaoAmy != fila.end();
+
+        if(amyNaFila){
+            if(!leonardNaFila){
+                if(!pennyNaFila){
+                    passarPrimeiroDoCasalNaFrente("Amy");
+                    fila.insert(++posicaoAmy, nome);
+                }
+            }
+            else{
+                if(pennyNaFila){
+                   if(distance(inicioFila, posicaoPenny) < distance(inicioFila, posicaoLeonard))
+                        fila.insert(++posicaoLeonard, nome);
+                    else
+                         fila.insert(++posicaoPenny, nome);
+               }
+            }
         }
         else{
-            fila.insert(++posicaoLeonard, nome); 
+           if(!leonardNaFila){
+                if(!pennyNaFila){
+                    fila.push_front(nome);
+                }   
+                else{
+                    fila.insert(++posicaoPenny, nome);
+                }
+           }
+           else{
+               if(pennyNaFila){
+                   if(distance(inicioFila, posicaoPenny) < distance(inicioFila, posicaoLeonard))
+                        fila.insert(++posicaoLeonard, nome);
+                    else
+                         fila.insert(++posicaoPenny, nome);
+
+               }
+           }
         }
 
     }
+
     else if(nome == "Howard"){
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
         auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
 
         if(posicaoBernadette != fila.end()){
+            passarPrimeiroDoCasalNaFrente("Bernadette");
             fila.insert(++posicaoBernadette, nome);
         }
         else if(posicaoSheldon ==  fila.end()){
@@ -70,9 +110,9 @@ void adicionarPersonagemNaFila(string nome){
     else if(nome == "Leonard"){
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
         auto posicaoPenny = posicaoPersonagemNaFila("Penny");
-        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
 
-        if(posicaoAmy != fila.end()){
+        if(posicaoPenny != fila.end()){
+            passarPrimeiroDoCasalNaFrente("Penny");
             fila.insert(++posicaoPenny, nome);
         }
         else if(posicaoHoward ==  fila.end()){
@@ -80,6 +120,51 @@ void adicionarPersonagemNaFila(string nome){
         }
         else{
             fila.insert(++posicaoHoward, nome);
+        }
+    }
+    else if (nome == "Amy"){
+        auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+        auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+        if(posicaoSheldon != fila.end()){
+            passarPrimeiroDoCasalNaFrente("Sheldon");
+            fila.insert(++posicaoSheldon, nome);
+        }
+        else if(posicaoPenny == fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoPenny, nome); 
+        }
+
+    }
+    else if(nome == "Bernadette"){
+        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+        auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+
+        if(posicaoHoward != fila.end()){
+            passarPrimeiroDoCasalNaFrente("Howard");
+            fila.insert(++posicaoHoward, nome);
+        }
+        else if(posicaoAmy ==  fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoAmy, nome);
+        }
+    }
+    else if(nome == "Penny"){
+        auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
+        auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+
+        if(posicaoLeonard != fila.end()){
+            passarPrimeiroDoCasalNaFrente("Leonard");
+            fila.insert(++posicaoLeonard, nome);
+        }
+        else if(posicaoBernadette ==  fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoLeonard, nome);
         }
     }
     else if(nome == "Stuart"){
