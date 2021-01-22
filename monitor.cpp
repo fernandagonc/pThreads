@@ -46,6 +46,7 @@ void adicionarPersonagemNaFila(string nome){
             fila.insert(++posicaoAmy, nome);
         }
         else if(posicaoLeonard == fila.end()){
+            //Verificar Penny e casais
             fila.push_front(nome);
         }
         else{
@@ -70,9 +71,8 @@ void adicionarPersonagemNaFila(string nome){
     else if(nome == "Leonard"){
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
         auto posicaoPenny = posicaoPersonagemNaFila("Penny");
-        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
 
-        if(posicaoAmy != fila.end()){
+        if(posicaoPenny != fila.end()){
             fila.insert(++posicaoPenny, nome);
         }
         else if(posicaoHoward ==  fila.end()){
@@ -80,6 +80,48 @@ void adicionarPersonagemNaFila(string nome){
         }
         else{
             fila.insert(++posicaoHoward, nome);
+        }
+    }
+    else if (nome == "Amy"){
+        auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+        auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+        if(posicaoSheldon != fila.end()){
+            fila.insert(++posicaoSheldon, nome);
+        }
+        else if(posicaoPenny == fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoPenny, nome); 
+        }
+
+    }
+    else if(nome == "Bernadette"){
+        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+        auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+
+        if(posicaoHoward != fila.end()){
+            fila.insert(++posicaoHoward, nome);
+        }
+        else if(posicaoAmy ==  fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoAmy, nome);
+        }
+    }
+    else if(nome == "Penny"){
+        auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
+        auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+
+        if(posicaoLeonard != fila.end()){
+            fila.insert(++posicaoLeonard, nome);
+        }
+        else if(posicaoBernadette ==  fila.end()){
+            fila.push_front(nome);
+        }
+        else{
+            fila.insert(++posicaoLeonard, nome);
         }
     }
     else if(nome == "Stuart"){
