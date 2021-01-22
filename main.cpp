@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <thread>
 #include <iostream>
+#include <algorithm> 
 #include "personagem.hpp"
 #include "monitor.hpp"
 #include <unistd.h>
@@ -107,14 +108,10 @@ int main(int argc, char *argv[]){
         sleep(0.5);
     }
 
-    // personagens[0].id = criarThread(personagens[0]);
-    // personagens[4].id = criarThread(personagens[4]);
-    // personagens[6].id = criarThread(personagens[6]);
-    // personagens[7].id = criarThread(personagens[7]);
-    
+    random_shuffle(personagens, personagens + 8);
+
     for(int i=0; i < 8; i++){
         personagens[i].id = criarThread(personagens[i]);
-        //sleep(1);
     }
 
     for(int i=0; i < 8; i++){
@@ -122,10 +119,6 @@ int main(int argc, char *argv[]){
 
     }
 
-    // joinThread(personagens[0].id);
-    // joinThread(personagens[4].id);
-    // joinThread(personagens[6].id);
-    // joinThread(personagens[7].id);
 
     threadsPersonagensAtivas = false;
     joinThread(raj);

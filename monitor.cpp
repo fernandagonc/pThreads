@@ -132,52 +132,44 @@ void Monitor::liberar(Personagem p){
         pthread_cond_signal(&this->condicao);
 };
 
-bool deadLockPersonagensMasculinos(){
+bool hasDeadLock(){
     auto posicaoHoward = posicaoPersonagemNaFila("Howard");
     auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
     auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
 
-    if(posicaoSheldon != fila.end() && posicaoLeonard != fila.end() && posicaoHoward != fila.end()){
-        return true;
-    }
-    
-    return false;
-    
-
-}
-
-bool deadLockPersonagensFemininos(){
     auto posicaoAmy = posicaoPersonagemNaFila("Amy");
     auto posicaoPenny = posicaoPersonagemNaFila("Penny");
     auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
 
-    if(posicaoAmy != fila.end() && posicaoPenny != fila.end() && posicaoBernadette != fila.end()){
-        return true;
+    auto filaEnd = fila.end();
+
+    if(posicaoSheldon != filaEnd && posicaoLeonard != filaEnd && posicaoHoward != filaEnd){
+        if (posicaoAmy == filaEnd && posicaoPenny == filaEnd && posicaoBernadette == filaEnd)
+            return true; // deadlock masculino
+        else if(posicaoAmy != filaEnd && posicaoPenny != filaEnd && posicaoBernadette != filaEnd)
+            return true; // deadlock casais
     }
     
+    else if(posicaoAmy != filaEnd && posicaoPenny != filaEnd && posicaoBernadette != filaEnd){
+        if(posicaoSheldon == filaEnd && posicaoLeonard == filaEnd && posicaoHoward == fila.end())
+            return true; // deadlock feminino
+    }
     return false;
     
 
 }
+
+
 
 void Monitor::verificar(){
 
     cout << "Verificando: ";
 
-    bool deadLockFeminino = deadLockPersonagensFemininos();
-    bool deadlockMasculino = deadLockPersonagensMasculinos();
+    bool deadLock =  hasDeadLock();
 
-    if(deadLockFeminino && deadlockMasculino){
-        cout << "Deadlock casais \n";
-        //liberar um dos casais aleatoriamente
-    }
-    else if (deadLockFeminino){
-        cout << "Deadlock feminino \n";
-        //liberar uma das mulheres
-    }
-    else if (deadlockMasculino){
-        cout << "Deadlock masculino \n";
-        //liberar um dos homens
+    if(deadLock){
+        cout << "Deadlock \n";
+        pthread_cond_signal(&this->condicao);
     }
     else
         cout << "Sem deadlocks \n";
