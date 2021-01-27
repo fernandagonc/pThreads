@@ -68,7 +68,8 @@ void * threadRaj (void * pointer){
         sleep(5);
         forno.verificar();
     }
-
+    
+    return 0;
 }
 
 void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
@@ -106,7 +107,7 @@ int main(int argc, char *argv[]){
         sleep(0.5);
     }
 
-    // random_shuffle(personagens, personagens + 8);
+    random_shuffle(personagens, personagens + 8);
 
     for(int i=0; i < 8; i++){
         personagens[i].id = criarThread(personagens[i]);

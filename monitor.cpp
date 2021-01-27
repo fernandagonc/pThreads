@@ -5,6 +5,8 @@
 #include <string>
 #include <algorithm>
 #include <iterator>
+#include <unistd.h>
+
 using namespace std;
 
 bool isFornoLivre = true;
@@ -64,10 +66,7 @@ void adicionarPersonagemNaFila(string nome){
                     fila.insert(++posicaoAmy, nome);
             }
             else{
-                if(distance(inicioFila, posicaoPenny) < distance(inicioFila, posicaoLeonard))
-                    fila.insert(++posicaoLeonard, nome);
-                else
-                    fila.insert(++posicaoPenny, nome);
+                fila.insert(++posicaoAmy, nome);
                
             }
         }
@@ -123,10 +122,7 @@ void adicionarPersonagemNaFila(string nome){
                     fila.insert(++posicaoBernadette, nome);
             }
             else{
-                if(distance(inicioFila, posicaoAmy) < distance(inicioFila, posicaoSheldon))
-                    fila.insert(++posicaoSheldon, nome);
-                else
-                    fila.insert(++posicaoAmy, nome);               
+                    fila.insert(++posicaoBernadette, nome);               
             }
         }
         else{
@@ -178,10 +174,7 @@ void adicionarPersonagemNaFila(string nome){
                     fila.insert(++posicaoPenny, nome);
             }
             else{
-                if(distance(inicioFila, posicaoBernadette) < distance(inicioFila, posicaoHoward))
-                    fila.insert(++posicaoHoward, nome);
-                else
-                    fila.insert(++posicaoBernadette, nome);               
+                fila.insert(++posicaoPenny, nome);             
             }
         }
         else{
@@ -233,10 +226,7 @@ void adicionarPersonagemNaFila(string nome){
                     fila.insert(++posicaoSheldon, nome);
             }
             else{
-                if(distance(inicioFila, posicaoPenny) < distance(inicioFila, posicaoLeonard))
-                    fila.insert(++posicaoLeonard, nome);
-                else
-                    fila.insert(++posicaoPenny, nome);
+                fila.insert(++posicaoSheldon, nome);
                
             }
         }
@@ -291,10 +281,7 @@ void adicionarPersonagemNaFila(string nome){
                     fila.insert(++posicaoHoward, nome);
             }
             else{
-                if(distance(inicioFila, posicaoAmy) < distance(inicioFila, posicaoSheldon))
-                    fila.insert(++posicaoSheldon, nome);
-                else
-                    fila.insert(++posicaoAmy, nome);               
+                fila.insert(++posicaoHoward, nome);           
             }
         }
         else{
@@ -346,10 +333,7 @@ void adicionarPersonagemNaFila(string nome){
                     fila.insert(++posicaoLeonard, nome);
             }
             else{
-                if(distance(inicioFila, posicaoBernadette) < distance(inicioFila, posicaoHoward))
-                    fila.insert(++posicaoHoward, nome);
-                else
-                    fila.insert(++posicaoBernadette, nome);               
+                fila.insert(++posicaoLeonard, nome);               
             }
         }
         else{
@@ -413,23 +397,26 @@ void Monitor::esperar(Personagem p){
         exit(2);
     }
 
-    while(fila.front() != p.nome)
+    while(fila.front() != p.nome){
         pthread_cond_wait(&this->condicao, &this->lock);
+    }
+    fila.remove(p.nome);
+
 
 };
 
 void Monitor::liberar(Personagem p){
     
-    
-    cout << p.nome << " vai comer \n";
-    fila.remove(p.nome);
+    cout << "liberar :";
     cout << "LISTA: ";
     printFila(fila);
 
     pthread_mutex_unlock(&this->lock); 
 
-    if(fila.front() == p.nome)
+    if(fila.front() == p.nome){
         pthread_cond_signal(&this->condicao);
+    }
+        
 };
 
 bool hasDeadLock(){
@@ -441,22 +428,35 @@ bool hasDeadLock(){
     auto posicaoPenny = posicaoPersonagemNaFila("Penny");
     auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
 
-    auto filaEnd = fila.end();
-
-    if(posicaoSheldon != filaEnd && posicaoLeonard != filaEnd && posicaoHoward != filaEnd){
-        if (posicaoAmy == filaEnd && posicaoPenny == filaEnd && posicaoBernadette == filaEnd)
-            return true; // deadlock masculino
-        else if(posicaoAmy != filaEnd && posicaoPenny != filaEnd && posicaoBernadette != filaEnd)
-            return true; // deadlock casais
-    }
+    int sheldonAmy = 0;
+    if(posicaoSheldon != fila.end())
+        sheldonAmy++;
+        
     
-    else if(posicaoAmy != filaEnd && posicaoPenny != filaEnd && posicaoBernadette != filaEnd){
-        if(posicaoSheldon == filaEnd && posicaoLeonard == filaEnd && posicaoHoward == fila.end())
-            return true; // deadlock feminino
+    if(posicaoAmy != fila.end())
+        sheldonAmy++;
+
+    int leonardPenny = 0;
+    if(posicaoLeonard != fila.end())
+        leonardPenny++;
+    
+    if(posicaoPenny != fila.end())
+            leonardPenny++;
+
+    int howardBernadette = 0;
+    if(posicaoHoward != fila.end())
+        howardBernadette++;
+        
+    
+    if(posicaoBernadette != fila.end())
+            howardBernadette++;
+
+    if (sheldonAmy == howardBernadette && howardBernadette == leonardPenny){
+        return true;
     }
+
     return false;
     
-
 }
 
 
@@ -470,6 +470,7 @@ void Monitor::verificar(){
     if(deadLock){
         cout << "Deadlock \n";
         pthread_cond_signal(&this->condicao);
+        sleep(5);
     }
     else
         cout << "Sem deadlocks \n";

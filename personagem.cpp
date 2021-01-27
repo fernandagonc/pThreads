@@ -34,6 +34,7 @@ void Personagem::comer() {
 void Personagem::trabalhar() {
     cout << this->nome << " voltou para o trabalho \n";
     sleep(distr(gen));
+    sleep(4);
 }
 
 void Personagem::printDadosPersonagem(){
