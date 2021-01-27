@@ -12,11 +12,10 @@ class Personagem{
     public: 
         string nome;
         int nroVezesUsoForno;
-        bool isCasal;
         pthread_t id; 
 
         Personagem();
-        Personagem(string nome, bool isCasal, int nroVezesUsoForno, pthread_t id);
+        Personagem(string nome, int nroVezesUsoForno, pthread_t id);
         
         void esquentarAlgo();
         void comer();

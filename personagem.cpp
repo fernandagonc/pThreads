@@ -15,10 +15,9 @@ uniform_int_distribution<> distr(3, 6); // define the range
 
 Personagem::Personagem(){};
 
-Personagem::Personagem(string nome, bool isCasal, int nroVezesUsoForno, pthread_t id){
+Personagem::Personagem(string nome, int nroVezesUsoForno, pthread_t id){
     this->nroVezesUsoForno = nroVezesUsoForno;
     this->nome = nome;
-    this->isCasal = isCasal;
     this->id = id;
 }
 
@@ -38,5 +37,5 @@ void Personagem::trabalhar() {
 }
 
 void Personagem::printDadosPersonagem(){
-    cout << this->nome << " " << this->id << " " << this->isCasal << " usoForno: " << this->nroVezesUsoForno << " \n";
+    cout << this->nome << " " << this->id << " "  << " usoForno: " << this->nroVezesUsoForno << " \n";
 }

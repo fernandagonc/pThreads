@@ -17,7 +17,7 @@ bool threadsPersonagensAtivas = true;
 void * threadHandler (void * pointer){
 
     Personagem * dados = (Personagem *)pointer;
-    Personagem personagem(dados->nome, dados->isCasal, dados->nroVezesUsoForno, dados->id);
+    Personagem personagem(dados->nome, dados->nroVezesUsoForno, dados->id);
 
     while(personagem.nroVezesUsoForno > 0) {
         forno.esperar(personagem);
@@ -50,21 +50,7 @@ pthread_t criarThread (Personagem personagem) {
     return id;
 };
 
-void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
-    Personagem novo;
-    string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
 
-    for(int i = 0; i < 8; i++){
-        if (i >= 0 && i <= 5){
-            novo = Personagem(nomes[i], true, nroVezesUsoForno, i);
-        } 
-        else {
-            novo = Personagem(nomes[i], false, nroVezesUsoForno, i);
-        }  
-        personagens[i] = novo;
-    }
-
-}
 
 void joinThread(pthread_t id){
     if (pthread_join(id, NULL) < 0) {
@@ -81,6 +67,18 @@ void * threadRaj (void * pointer){
     while(threadsPersonagensAtivas){
         sleep(5);
         forno.verificar();
+    }
+
+}
+
+void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
+    Personagem novo;
+    string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
+
+    for(int i = 0; i < 8; i++){
+    
+        novo = Personagem(nomes[i], nroVezesUsoForno, i);
+        personagens[i] = novo;
     }
 
 }
@@ -108,7 +106,7 @@ int main(int argc, char *argv[]){
         sleep(0.5);
     }
 
-    random_shuffle(personagens, personagens + 8);
+    // random_shuffle(personagens, personagens + 8);
 
     for(int i=0; i < 8; i++){
         personagens[i].id = criarThread(personagens[i]);

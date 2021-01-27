@@ -60,6 +60,7 @@ void adicionarPersonagemNaFila(string nome){
         if(amyNaFila){
             if(!leonardNaFila || !pennyNaFila){
                     passarPrimeiroDoCasalNaFrente("Amy");
+                    posicaoAmy = posicaoPersonagemNaFila("Amy");
                     fila.insert(++posicaoAmy, nome);
             }
             else{
@@ -111,13 +112,14 @@ void adicionarPersonagemNaFila(string nome){
         auto posicaoAmy = posicaoPersonagemNaFila("Amy");
 
         bool bernadetteNaFila = posicaoBernadette != fila.end();
-        bool sheldonNaFila = posicaoLeonard != fila.end();
+        bool sheldonNaFila = posicaoSheldon != fila.end();
         bool amyNaFila = posicaoAmy != fila.end();
         bool leonardEPennyNaFila = posicaoLeonard != fila.end() && posicaoPenny != fila.end();
 
         if(bernadetteNaFila){
             if(!sheldonNaFila || !amyNaFila){
                     passarPrimeiroDoCasalNaFrente("Bernadette");
+                    posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
                     fila.insert(++posicaoBernadette, nome);
             }
             else{
@@ -172,6 +174,7 @@ void adicionarPersonagemNaFila(string nome){
         if(pennyNaFila){
             if(!howardNaFila || !bernadetteNaFila){
                     passarPrimeiroDoCasalNaFrente("Penny");
+                    posicaoPenny = posicaoPersonagemNaFila("Penny");
                     fila.insert(++posicaoPenny, nome);
             }
             else{
@@ -226,6 +229,7 @@ void adicionarPersonagemNaFila(string nome){
         if(sheldonNaFila){
             if(!leonardNaFila || !pennyNaFila){
                     passarPrimeiroDoCasalNaFrente("Sheldon");
+                    posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
                     fila.insert(++posicaoSheldon, nome);
             }
             else{
@@ -276,13 +280,14 @@ void adicionarPersonagemNaFila(string nome){
         auto posicaoAmy = posicaoPersonagemNaFila("Amy");
 
         bool howardNaFila = posicaoHoward != fila.end();
-        bool sheldonNaFila = posicaoLeonard != fila.end();
+        bool sheldonNaFila = posicaoSheldon != fila.end();
         bool amyNaFila = posicaoAmy != fila.end();
         bool leonardEPennyNaFila = posicaoLeonard != fila.end() && posicaoPenny != fila.end();
 
         if(howardNaFila){
             if(!sheldonNaFila || !amyNaFila){
                     passarPrimeiroDoCasalNaFrente("Howard");
+                    posicaoHoward = posicaoPersonagemNaFila("Howard");
                     fila.insert(++posicaoHoward, nome);
             }
             else{
@@ -337,6 +342,7 @@ void adicionarPersonagemNaFila(string nome){
         if(leonardNaFila){
             if(!howardNaFila || !bernadetteNaFila){
                     passarPrimeiroDoCasalNaFrente("Leonard");
+                    posicaoLeonard = posicaoPersonagemNaFila("Leonard");
                     fila.insert(++posicaoLeonard, nome);
             }
             else{
