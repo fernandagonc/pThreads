@@ -26,6 +26,8 @@ class Monitor{
         void condSignal(pthread_cond_t* cond);
         void condWait(pthread_cond_t* cond, pthread_mutex_t* mutex);
         void liberarPersonagem(string nome);
+        void waitPersonagem(string nome);
+
         void verificar();
 };
 

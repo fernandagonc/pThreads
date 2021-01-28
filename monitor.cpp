@@ -14,7 +14,7 @@ std::list<string> fila;
 
 Monitor::Monitor() {
 
-    this->lock = PTHREAD_MUTEX_INITIALIZER;
+    // this->lock = PTHREAD_MUTEX_INITIALIZER;
     initCond(&sheldonCond);
     initCond(&amyCond);
     initCond(&howardCond);
@@ -412,6 +412,34 @@ void adicionarPersonagemNaFila(string nome){
     }
 }
 
+void Monitor::waitPersonagem(string nome){
+    if(nome == "Sheldon"){
+        condWait(&sheldonCond, &this->lock);         
+    }
+    else if(nome == "Howard"){
+        condWait(&howardCond, &this->lock);
+    }
+    else if(nome == "Leonard"){
+        condWait(&leonardCond, &this->lock);
+    }
+    else if(nome == "Amy"){
+        condWait(&amyCond, &this->lock);
+    }
+    else if(nome == "Bernadette"){
+        condWait(&bernadetteCond, &this->lock);
+    }
+    else if(nome == "Penny"){
+        condWait(&pennyCond, &this->lock);
+    }
+    else if(nome == "Stuart"){
+        condWait(&stuartCond, &this->lock);
+    }
+    else if(nome == "Kripke"){
+        condWait(&kripkeCond, &this->lock);
+    }
+
+}
+
 void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
     
@@ -424,30 +452,8 @@ void Monitor::esperar(Personagem p){
         exit(2);
     }
 
-    if(p.nome == "Sheldon"){
-        condWait(&sheldonCond, &this->lock);         
-    }
-    else if(p.nome == "Howard"){
-        condWait(&howardCond, &this->lock);
-    }
-    else if(p.nome == "Leonard"){
-        condWait(&leonardCond, &this->lock);
-    }
-    else if(p.nome == "Amy"){
-        condWait(&amyCond, &this->lock);
-    }
-    else if(p.nome == "Bernadette"){
-        condWait(&bernadetteCond, &this->lock);
-    }
-    else if(p.nome == "Penny"){
-        condWait(&pennyCond, &this->lock);
-    }
-    else if(p.nome == "Stuart"){
-        condWait(&stuartCond, &this->lock);
-    }
-    else if(p.nome == "Kripke"){
-        condWait(&kripkeCond, &this->lock);
-    }
+    if(fila.front() != p.nome)
+        waitPersonagem(p.nome);
 
     fila.remove(p.nome);
 
@@ -489,8 +495,9 @@ void Monitor::liberar(Personagem p){
     printFila(fila);
 
     pthread_mutex_unlock(&this->lock); 
-    liberarPersonagem(p.nome);
-        
+
+    if(fila.front() == p.nome)
+        liberarPersonagem(p.nome);
 };
 
 bool hasDeadLock(){
@@ -525,7 +532,10 @@ bool hasDeadLock(){
     if(posicaoBernadette != fila.end())
             howardBernadette++;
 
+    
     if (sheldonAmy == howardBernadette && howardBernadette == leonardPenny){
+        if(sheldonAmy == 0)
+            return false; //(apenas kripke e stuart na lista)
         return true;
     }
 
@@ -546,8 +556,12 @@ void Monitor::verificar(){
         string nome = fila.front();
         liberarPersonagem(nome);
     }
-    else
+    else{
         cout << "Sem deadlocks \n";
+        // string nome = fila.front();
+        // liberarPersonagem(nome);
+    }
+       
 
     return;
 };
