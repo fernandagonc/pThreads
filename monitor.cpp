@@ -15,7 +15,14 @@ std::list<string> fila;
 Monitor::Monitor() {
 
     this->lock = PTHREAD_MUTEX_INITIALIZER;
-    this->condicao = PTHREAD_COND_INITIALIZER;
+    initCond(&sheldonCond);
+    initCond(&amyCond);
+    initCond(&howardCond);
+    initCond(&bernadetteCond);
+    initCond(&leonardCond);
+    initCond(&pennyCond);
+    initCond(&stuartCond);
+    initCond(&kripkeCond);
     this->controleThreadsCriadas = 0;
 
     if (pthread_mutex_init(&this->lock, NULL) != 0) { 
@@ -25,6 +32,26 @@ Monitor::Monitor() {
 
 };
 
+void Monitor::initCond(pthread_cond_t* cond){
+    if (pthread_cond_init(cond, NULL) != 0) {
+        perror("condInit error");
+        exit(2);
+    }
+}
+
+void Monitor::condSignal(pthread_cond_t* cond) {
+    if (pthread_cond_signal(cond) != 0) {
+        perror("condSignal error");
+        exit(2);
+    }
+}
+
+void Monitor::condWait(pthread_cond_t* cond, pthread_mutex_t* mutex) {
+    if (pthread_cond_wait(cond, mutex) != 0) {
+        perror("condWait() error");
+        exit(2);
+    }
+}
 void printFila(list <string> g) 
 { 
     list <string> :: iterator it; 
@@ -397,13 +424,63 @@ void Monitor::esperar(Personagem p){
         exit(2);
     }
 
-    while(fila.front() != p.nome){
-        pthread_cond_wait(&this->condicao, &this->lock);
+    if(p.nome == "Sheldon"){
+        condWait(&sheldonCond, &this->lock);         
     }
+    else if(p.nome == "Howard"){
+        condWait(&howardCond, &this->lock);
+    }
+    else if(p.nome == "Leonard"){
+        condWait(&leonardCond, &this->lock);
+    }
+    else if(p.nome == "Amy"){
+        condWait(&amyCond, &this->lock);
+    }
+    else if(p.nome == "Bernadette"){
+        condWait(&bernadetteCond, &this->lock);
+    }
+    else if(p.nome == "Penny"){
+        condWait(&pennyCond, &this->lock);
+    }
+    else if(p.nome == "Stuart"){
+        condWait(&stuartCond, &this->lock);
+    }
+    else if(p.nome == "Kripke"){
+        condWait(&kripkeCond, &this->lock);
+    }
+
     fila.remove(p.nome);
 
 
 };
+
+void Monitor::liberarPersonagem(string nome){
+    
+    if(nome == "Sheldon"){
+        condSignal(&sheldonCond);         
+    }
+    else if(nome == "Howard"){
+        condSignal(&howardCond);
+    }
+    else if(nome == "Leonard"){
+        condSignal(&leonardCond);
+    }
+    else if(nome == "Amy"){
+        condSignal(&amyCond);
+    }
+    else if(nome == "Bernadette"){
+        condSignal(&bernadetteCond);
+    }
+    else if(nome == "Penny"){
+        condSignal(&pennyCond);
+    }
+    else if(nome == "Stuart"){
+        condSignal(&stuartCond);
+    }
+    else if(nome == "Kripke"){
+        condSignal(&kripkeCond);
+    }
+}
 
 void Monitor::liberar(Personagem p){
     
@@ -412,10 +489,7 @@ void Monitor::liberar(Personagem p){
     printFila(fila);
 
     pthread_mutex_unlock(&this->lock); 
-
-    if(fila.front() == p.nome){
-        pthread_cond_signal(&this->condicao);
-    }
+    liberarPersonagem(p.nome);
         
 };
 
@@ -469,8 +543,8 @@ void Monitor::verificar(){
 
     if(deadLock){
         cout << "Deadlock \n";
-        pthread_cond_signal(&this->condicao);
-        sleep(5);
+        string nome = fila.front();
+        liberarPersonagem(nome);
     }
     else
         cout << "Sem deadlocks \n";
