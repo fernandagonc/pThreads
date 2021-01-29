@@ -483,10 +483,12 @@ void Monitor::esperar(Personagem p){
         cout << "pthread_mutex_lock error";
         exit(2);
     }
-   
-    if(primeiroDaFila != p.nome){
-        waitPersonagem(p.nome);
-        cout << "Saiu do wait: " << p.nome << "\n"; 
+    
+    if(fila.size() > 1){
+        if(primeiroDaFila != p.nome){
+            waitPersonagem(p.nome);
+            cout << "Saiu do wait: " << p.nome << "\n"; 
+        }
     }
        
 };
