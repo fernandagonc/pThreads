@@ -16,8 +16,7 @@ class Monitor{
         pthread_cond_t pennyCond;
         pthread_cond_t stuartCond;
         pthread_cond_t kripkeCond;; 
-        int controleThreadsCriadas;
-
+        string primeiroDaFila;
 
         Monitor();        
         void esperar(Personagem p);
@@ -27,7 +26,6 @@ class Monitor{
         void condWait(pthread_cond_t* cond, pthread_mutex_t* mutex);
         void liberarPersonagem(string nome);
         void waitPersonagem(string nome);
-
         void verificar();
 };
 

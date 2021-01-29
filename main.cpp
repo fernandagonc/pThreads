@@ -24,8 +24,8 @@ void * threadHandler (void * pointer){
         personagem.esquentarAlgo();
         forno.liberar(personagem);
         personagem.comer();
-        personagem.nroVezesUsoForno = personagem.nroVezesUsoForno - 1;
         personagem.trabalhar();
+        personagem.nroVezesUsoForno = personagem.nroVezesUsoForno - 1;
     }
 
     return 0; 
@@ -45,7 +45,7 @@ pthread_t criarThread (Personagem personagem) {
         return -1;
     }
 
-    cout << "Thread de " << personagem.nome <<" criada.\n";
+    //cout << "Thread de " << personagem.nome <<" criada.\n";
     sleep(0.5);
     return id;
 };

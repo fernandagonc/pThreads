@@ -23,7 +23,7 @@ Monitor::Monitor() {
     initCond(&pennyCond);
     initCond(&stuartCond);
     initCond(&kripkeCond);
-    this->controleThreadsCriadas = 0;
+    primeiroDaFila = "";
 
     if (pthread_mutex_init(&this->lock, NULL) != 0) { 
         cout << "\n Inicialização mutex falhou.\n"; 
@@ -412,53 +412,6 @@ void adicionarPersonagemNaFila(string nome){
     }
 }
 
-void Monitor::waitPersonagem(string nome){
-    if(nome == "Sheldon"){
-        condWait(&sheldonCond, &this->lock);         
-    }
-    else if(nome == "Howard"){
-        condWait(&howardCond, &this->lock);
-    }
-    else if(nome == "Leonard"){
-        condWait(&leonardCond, &this->lock);
-    }
-    else if(nome == "Amy"){
-        condWait(&amyCond, &this->lock);
-    }
-    else if(nome == "Bernadette"){
-        condWait(&bernadetteCond, &this->lock);
-    }
-    else if(nome == "Penny"){
-        condWait(&pennyCond, &this->lock);
-    }
-    else if(nome == "Stuart"){
-        condWait(&stuartCond, &this->lock);
-    }
-    else if(nome == "Kripke"){
-        condWait(&kripkeCond, &this->lock);
-    }
-
-}
-
-void Monitor::esperar(Personagem p){
-    cout << p.nome << " quer usar o forno \n";
-    
-    adicionarPersonagemNaFila(p.nome);
-    cout << "LISTA: ";
-    printFila(fila);
-
-    if (pthread_mutex_lock(&this->lock) != 0) {
-        cout << "pthread_mutex_lock error";
-        exit(2);
-    }
-
-    if(fila.front() != p.nome)
-        waitPersonagem(p.nome);
-
-    fila.remove(p.nome);
-
-
-};
 
 void Monitor::liberarPersonagem(string nome){
     
@@ -488,16 +441,73 @@ void Monitor::liberarPersonagem(string nome){
     }
 }
 
+void Monitor::waitPersonagem(string nome){
+    if(nome == "Sheldon"){
+        condWait(&sheldonCond, &this->lock);         
+    }
+    else if(nome == "Howard"){
+        condWait(&howardCond, &this->lock);
+    }
+    else if(nome == "Leonard"){
+        condWait(&leonardCond, &this->lock);
+    }
+    else if(nome == "Amy"){
+        condWait(&amyCond, &this->lock);
+    }
+    else if(nome == "Bernadette"){
+        condWait(&bernadetteCond, &this->lock);
+    }
+    else if(nome == "Penny"){
+        condWait(&pennyCond, &this->lock);
+    }
+    else if(nome == "Stuart"){
+        condWait(&stuartCond, &this->lock);
+    }
+    else if(nome == "Kripke"){
+        condWait(&kripkeCond, &this->lock);
+    }
+
+}
+
+
+
+void Monitor::esperar(Personagem p){
+    cout << p.nome << " quer usar o forno \n";
+    
+    adicionarPersonagemNaFila(p.nome);
+
+    cout << "LISTA: ";
+    printFila(fila);
+
+    if (pthread_mutex_lock(&this->lock) != 0) {
+        cout << "pthread_mutex_lock error";
+        exit(2);
+    }
+   
+    if(primeiroDaFila != p.nome){
+        waitPersonagem(p.nome);
+        cout << "Saiu do wait: " << p.nome << "\n"; 
+    }
+       
+};
+
 void Monitor::liberar(Personagem p){
     
     cout << "liberar :";
     cout << "LISTA: ";
     printFila(fila);
+    
+    fila.remove(p.nome);
+    primeiroDaFila = fila.front();
 
     pthread_mutex_unlock(&this->lock); 
+    
+    if(primeiroDaFila != ""){
+        liberarPersonagem(primeiroDaFila);
+        cout << "Liberou: " << p.nome << "\n";
+    }
 
-    if(fila.front() == p.nome)
-        liberarPersonagem(p.nome);
+
 };
 
 bool hasDeadLock(){
