@@ -52,8 +52,9 @@ void Monitor::condWait(pthread_cond_t* cond, pthread_mutex_t* mutex) {
         exit(2);
     }
 }
-void printFila(list <string> g) 
-{ 
+
+void printFila(list <string> g) { 
+    cout << "FILA: ";
     list <string> :: iterator it; 
     for(it = g.begin(); it != g.end(); ++it) 
         cout << *it  << ", "; 
@@ -475,8 +476,6 @@ void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
     
     adicionarPersonagemNaFila(p.nome);
-
-    cout << "LISTA: ";
     printFila(fila);
 
     if (pthread_mutex_lock(&this->lock) != 0) {
@@ -487,26 +486,82 @@ void Monitor::esperar(Personagem p){
     if(fila.size() > 1){
         if(primeiroDaFila != p.nome){
             waitPersonagem(p.nome);
-            cout << "Saiu do wait: " << p.nome << "\n"; 
         }
     }
        
 };
 
+string acharCasal(string nome){
+    if(nome == "Sheldon"){
+        return "Amy";
+    }
+    else if (nome == "Amy"){
+        return "Sheldon";
+    }
+    else if (nome == "Howard"){
+        return "Bernadette";
+    }
+    else if (nome == "Bernadette"){
+        return "Howard";
+    }
+    else if (nome == "Leonard"){
+        return "Penny";
+    }
+    else if (nome == "Penny"){
+        return "Leonard";
+    }
+
+    return "";
+}
+
+void acharOCasalEPassarNaFrente(string nome){
+
+    string nomeCasal = acharCasal(nome);
+    if (nomeCasal != ""){
+        auto posicaoCasal = posicaoPersonagemNaFila(nomeCasal);
+        bool casalNaFila = posicaoCasal != fila.end();
+        if (casalNaFila){
+            fila.remove(nomeCasal);
+            fila.push_front(nomeCasal);
+        }
+
+        return;
+    }
+     return;
+    
+}
+
+void reorganizarFila(){
+    auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+    auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+    auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
+    auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+    auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+    auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+
+    bool leonardNaFila = posicaoLeonard != fila.end();
+    bool pennyNaFila = posicaoPenny != fila.end();
+    bool howardNaFila = posicaoHoward != fila.end();
+    bool bernadetteNaFila = posicaoBernadette != fila.end();
+    bool amyNaFila = posicaoAmy != fila.end();
+    bool sheldonNaFila = posicaoSheldon != fila.end();
+
+    //todo
+
+}
+
 void Monitor::liberar(Personagem p){
     
-    cout << "liberar :";
-    cout << "LISTA: ";
-    printFila(fila);
     
     fila.remove(p.nome);
+    reorganizarFila();
+    acharOCasalEPassarNaFrente(p.nome);
     primeiroDaFila = fila.front();
 
     pthread_mutex_unlock(&this->lock); 
     
     if(primeiroDaFila != ""){
         liberarPersonagem(primeiroDaFila);
-        cout << "Liberou: " << p.nome << "\n";
     }
 
 
@@ -559,19 +614,12 @@ bool hasDeadLock(){
 
 void Monitor::verificar(){
 
-    cout << "Verificando: ";
-
     bool deadLock =  hasDeadLock();
 
     if(deadLock){
-        cout << "Deadlock \n";
         string nome = fila.front();
+        cout << "Raj detectou um deadlock, liberando: " << nome << "\n";
         liberarPersonagem(nome);
-    }
-    else{
-        cout << "Sem deadlocks \n";
-        // string nome = fila.front();
-        // liberarPersonagem(nome);
     }
        
 

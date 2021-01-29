@@ -45,7 +45,6 @@ pthread_t criarThread (Personagem personagem) {
         return -1;
     }
 
-    //cout << "Thread de " << personagem.nome <<" criada.\n";
     sleep(0.5);
     return id;
 };
@@ -58,7 +57,6 @@ void joinThread(pthread_t id){
         return; 
     }; 
 
-    cout << "Thread " << id << " finalizada \n";
     return;
 }
 
@@ -103,11 +101,10 @@ int main(int argc, char *argv[]){
         return -1;
     }
     else{
-        cout << "Thread do Raj criada.\n";
         sleep(0.5);
     }
 
-    random_shuffle(personagens, personagens + 8);
+    // random_shuffle(personagens, personagens + 8);
 
     for(int i=0; i < 8; i++){
         personagens[i].id = criarThread(personagens[i]);
