@@ -45,6 +45,9 @@ pthread_t criarThread (Personagem personagem) {
         return -1;
     }
 
+    cout << personagem.nome << " thread criada\n";
+
+
     sleep(0.5);
     return id;
 };
@@ -79,6 +82,7 @@ void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
         novo = Personagem(nomes[i], nroVezesUsoForno, i);
         personagens[i] = novo;
     }
+
 
 }
 

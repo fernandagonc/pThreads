@@ -67,7 +67,7 @@ list<string>::iterator posicaoPersonagemNaFila(string nome){
     return it;
 }
 
-void passarPrimeiroDoCasalNaFrente(string nome){
+void passarPessoaNaFrente(string nome){
     fila.remove(nome);
     fila.push_front(nome);
 }
@@ -89,7 +89,7 @@ void adicionarPersonagemNaFila(string nome){
 
         if(amyNaFila){
             if(!leonardNaFila || !pennyNaFila){
-                    passarPrimeiroDoCasalNaFrente("Amy");
+                    passarPessoaNaFrente("Amy");
                     posicaoAmy = posicaoPersonagemNaFila("Amy");
                     fila.insert(++posicaoAmy, nome);
             }
@@ -145,7 +145,7 @@ void adicionarPersonagemNaFila(string nome){
 
         if(bernadetteNaFila){
             if(!sheldonNaFila || !amyNaFila){
-                    passarPrimeiroDoCasalNaFrente("Bernadette");
+                    passarPessoaNaFrente("Bernadette");
                     posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
                     fila.insert(++posicaoBernadette, nome);
             }
@@ -197,7 +197,7 @@ void adicionarPersonagemNaFila(string nome){
 
         if(pennyNaFila){
             if(!howardNaFila || !bernadetteNaFila){
-                    passarPrimeiroDoCasalNaFrente("Penny");
+                    passarPessoaNaFrente("Penny");
                     posicaoPenny = posicaoPersonagemNaFila("Penny");
                     fila.insert(++posicaoPenny, nome);
             }
@@ -249,7 +249,7 @@ void adicionarPersonagemNaFila(string nome){
 
         if(sheldonNaFila){
             if(!leonardNaFila || !pennyNaFila){
-                    passarPrimeiroDoCasalNaFrente("Sheldon");
+                    passarPessoaNaFrente("Sheldon");
                     posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
                     fila.insert(++posicaoSheldon, nome);
             }
@@ -304,7 +304,7 @@ void adicionarPersonagemNaFila(string nome){
 
         if(howardNaFila){
             if(!sheldonNaFila || !amyNaFila){
-                    passarPrimeiroDoCasalNaFrente("Howard");
+                    passarPessoaNaFrente("Howard");
                     posicaoHoward = posicaoPersonagemNaFila("Howard");
                     fila.insert(++posicaoHoward, nome);
             }
@@ -356,7 +356,7 @@ void adicionarPersonagemNaFila(string nome){
 
         if(leonardNaFila){
             if(!howardNaFila || !bernadetteNaFila){
-                    passarPrimeiroDoCasalNaFrente("Leonard");
+                    passarPessoaNaFrente("Leonard");
                     posicaoLeonard = posicaoPersonagemNaFila("Leonard");
                     fila.insert(++posicaoLeonard, nome);
             }
@@ -531,6 +531,48 @@ void acharOCasalEPassarNaFrente(string nome){
     
 }
 
+
+int qtdSheldonAmy (){
+    auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+    auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+    int sheldonAmy = 0;
+    if(posicaoSheldon != fila.end())
+        sheldonAmy++;
+    
+    if(posicaoAmy != fila.end())
+        sheldonAmy++;
+    return sheldonAmy;
+}
+
+int qtdLeonardPenny(){
+    auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+    auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+    
+    int leonardPenny = 0;
+    if(posicaoLeonard != fila.end())
+        leonardPenny++;
+    
+    if(posicaoPenny != fila.end())
+        leonardPenny++;
+
+    return leonardPenny;
+}
+
+int qtdHowardBernadette(){
+    auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
+    auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+
+    int howardBernadette = 0;
+    if(posicaoHoward != fila.end())
+        howardBernadette++;
+    
+    if(posicaoBernadette != fila.end())
+        howardBernadette++;
+
+    return howardBernadette;
+
+}
+
 void reorganizarFila(){
     auto posicaoAmy = posicaoPersonagemNaFila("Amy");
     auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
@@ -538,25 +580,113 @@ void reorganizarFila(){
     auto posicaoHoward = posicaoPersonagemNaFila("Howard");
     auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
     auto posicaoPenny = posicaoPersonagemNaFila("Penny");
-
+    auto inicioFila = fila.begin();
     bool leonardNaFila = posicaoLeonard != fila.end();
-    bool pennyNaFila = posicaoPenny != fila.end();
     bool howardNaFila = posicaoHoward != fila.end();
-    bool bernadetteNaFila = posicaoBernadette != fila.end();
-    bool amyNaFila = posicaoAmy != fila.end();
     bool sheldonNaFila = posicaoSheldon != fila.end();
 
-    //todo
+    int sheldonAmy = qtdSheldonAmy();
+    int howardBernadette = qtdHowardBernadette();
+    int leonardPenny = qtdLeonardPenny();
+
+    if(sheldonAmy == 0){
+        if(howardBernadette == 1){
+            if(howardNaFila){
+                passarPessoaNaFrente("Howard");
+            }
+            else{
+                passarPessoaNaFrente("Bernadette");
+            }
+        }
+        else {
+            if(distance(inicioFila, posicaoBernadette) < distance(inicioFila, posicaoHoward)){
+                passarPessoaNaFrente("Howard");
+                passarPessoaNaFrente("Bernadette");
+            }
+            else{
+                passarPessoaNaFrente("Bernadette");
+                passarPessoaNaFrente("Howard");
+            }
+        }
+    }
+    else if(howardBernadette == 0){
+        if(leonardPenny == 1){
+            if(leonardNaFila){
+                passarPessoaNaFrente("Leonard");
+            }
+            else{
+                passarPessoaNaFrente("Penny");
+            }
+        }
+        else{
+             if(distance(inicioFila, posicaoPenny) < distance(inicioFila, posicaoLeonard)){
+                passarPessoaNaFrente("Leonard");
+                passarPessoaNaFrente("Penny");
+            }
+            else{
+                passarPessoaNaFrente("Penny");
+                passarPessoaNaFrente("Leonard");
+            }
+        }
+    }
+    else if(leonardPenny == 0){
+        if(sheldonAmy == 1){
+            if(sheldonNaFila){
+                passarPessoaNaFrente("Sheldon");
+            }
+            else{
+                passarPessoaNaFrente("Amy");
+        
+            }
+        }
+        else{
+             if(distance(inicioFila, posicaoAmy) < distance(inicioFila, posicaoSheldon)){
+                passarPessoaNaFrente("Sheldon");
+                passarPessoaNaFrente("Amy");
+            }
+            else{
+                passarPessoaNaFrente("Amy");
+                passarPessoaNaFrente("Sheldon");
+            }
+        }
+    }
+
+
 
 }
 
+
+bool precisaReorganizarFila(){
+    int sheldonAmy = qtdSheldonAmy();
+    int howardBernadette = qtdHowardBernadette();
+    int leonardPenny = qtdLeonardPenny();
+
+    if(sheldonAmy == 0 && howardBernadette == leonardPenny){
+        if(howardBernadette > 0)
+            return true;
+    }
+    if(howardBernadette == 0 && sheldonAmy == leonardPenny){
+        if(sheldonAmy > 0)
+            return true;
+    }
+    if(leonardPenny == 0 && sheldonAmy == howardBernadette){
+        if(sheldonAmy > 0)
+            return true;
+    }
+    
+
+    return false;
+
+} 
+
 void Monitor::liberar(Personagem p){
     
-    
     fila.remove(p.nome);
-    reorganizarFila();
+    if(precisaReorganizarFila())
+        reorganizarFila();
     acharOCasalEPassarNaFrente(p.nome);
     primeiroDaFila = fila.front();
+    printFila(fila);
 
     pthread_mutex_unlock(&this->lock); 
     
@@ -568,37 +698,9 @@ void Monitor::liberar(Personagem p){
 };
 
 bool hasDeadLock(){
-    auto posicaoHoward = posicaoPersonagemNaFila("Howard");
-    auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
-    auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
-
-    auto posicaoAmy = posicaoPersonagemNaFila("Amy");
-    auto posicaoPenny = posicaoPersonagemNaFila("Penny");
-    auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
-
-    int sheldonAmy = 0;
-    if(posicaoSheldon != fila.end())
-        sheldonAmy++;
-        
-    
-    if(posicaoAmy != fila.end())
-        sheldonAmy++;
-
-    int leonardPenny = 0;
-    if(posicaoLeonard != fila.end())
-        leonardPenny++;
-    
-    if(posicaoPenny != fila.end())
-            leonardPenny++;
-
-    int howardBernadette = 0;
-    if(posicaoHoward != fila.end())
-        howardBernadette++;
-        
-    
-    if(posicaoBernadette != fila.end())
-            howardBernadette++;
-
+    int sheldonAmy = qtdSheldonAmy();
+    int howardBernadette = qtdHowardBernadette();
+    int leonardPenny = qtdLeonardPenny();
     
     if (sheldonAmy == howardBernadette && howardBernadette == leonardPenny){
         if(sheldonAmy == 0)
