@@ -1,20 +1,10 @@
 #include "monitor.hpp"
-#include <iostream>
-#include <stdlib.h>
-#include <list>
-#include <string>
-#include <algorithm>
-#include <iterator>
-#include <unistd.h>
-
-using namespace std;
 
 bool isFornoLivre = true;
 std::list<string> fila;
 
 Monitor::Monitor() {
 
-    // this->lock = PTHREAD_MUTEX_INITIALIZER;
     initCond(&sheldonCond);
     initCond(&amyCond);
     initCond(&howardCond);
@@ -32,6 +22,15 @@ Monitor::Monitor() {
 
 };
 
+void printFila(list <string> g) { 
+    cout << "FILA: ";
+    list <string> :: iterator it; 
+    for(it = g.begin(); it != g.end(); ++it) 
+        cout << *it  << ", "; 
+    cout << '\n'; 
+} 
+
+
 void Monitor::initCond(pthread_cond_t* cond){
     if (pthread_cond_init(cond, NULL) != 0) {
         perror("condInit error");
@@ -46,6 +45,34 @@ void Monitor::condSignal(pthread_cond_t* cond) {
     }
 }
 
+void Monitor::liberarPersonagem(string nome){
+    
+    if(nome == "Sheldon"){
+        condSignal(&sheldonCond);         
+    }
+    else if(nome == "Howard"){
+        condSignal(&howardCond);
+    }
+    else if(nome == "Leonard"){
+        condSignal(&leonardCond);
+    }
+    else if(nome == "Amy"){
+        condSignal(&amyCond);
+    }
+    else if(nome == "Bernadette"){
+        condSignal(&bernadetteCond);
+    }
+    else if(nome == "Penny"){
+        condSignal(&pennyCond);
+    }
+    else if(nome == "Stuart"){
+        condSignal(&stuartCond);
+    }
+    else if(nome == "Kripke"){
+        condSignal(&kripkeCond);
+    }
+}
+
 void Monitor::condWait(pthread_cond_t* cond, pthread_mutex_t* mutex) {
     if (pthread_cond_wait(cond, mutex) != 0) {
         perror("condWait() error");
@@ -53,26 +80,45 @@ void Monitor::condWait(pthread_cond_t* cond, pthread_mutex_t* mutex) {
     }
 }
 
-void printFila(list <string> g) { 
-    cout << "FILA: ";
-    list <string> :: iterator it; 
-    for(it = g.begin(); it != g.end(); ++it) 
-        cout << *it  << ", "; 
-    cout << '\n'; 
-} 
+void Monitor::waitPersonagem(string nome){
+    if(nome == "Sheldon"){
+        condWait(&sheldonCond, &this->lock);         
+    }
+    else if(nome == "Howard"){
+        condWait(&howardCond, &this->lock);
+    }
+    else if(nome == "Leonard"){
+        condWait(&leonardCond, &this->lock);
+    }
+    else if(nome == "Amy"){
+        condWait(&amyCond, &this->lock);
+    }
+    else if(nome == "Bernadette"){
+        condWait(&bernadetteCond, &this->lock);
+    }
+    else if(nome == "Penny"){
+        condWait(&pennyCond, &this->lock);
+    }
+    else if(nome == "Stuart"){
+        condWait(&stuartCond, &this->lock);
+    }
+    else if(nome == "Kripke"){
+        condWait(&kripkeCond, &this->lock);
+    }
 
+}
 
-list<string>::iterator posicaoPersonagemNaFila(string nome){
+list<string>::iterator Monitor::posicaoPersonagemNaFila(string nome){
     auto it = find(fila.begin(), fila.end(), nome);
     return it;
 }
 
-void passarPessoaNaFrente(string nome){
+void Monitor::passarPessoaNaFrente(string nome){
     fila.remove(nome);
     fila.push_front(nome);
 }
 
-void adicionarPersonagemNaFila(string nome){
+void Monitor::adicionarPersonagemNaFila(string nome){
     auto inicioFila = fila.begin();
 
     if (nome == "Sheldon"){
@@ -414,64 +460,6 @@ void adicionarPersonagemNaFila(string nome){
 }
 
 
-void Monitor::liberarPersonagem(string nome){
-    
-    if(nome == "Sheldon"){
-        condSignal(&sheldonCond);         
-    }
-    else if(nome == "Howard"){
-        condSignal(&howardCond);
-    }
-    else if(nome == "Leonard"){
-        condSignal(&leonardCond);
-    }
-    else if(nome == "Amy"){
-        condSignal(&amyCond);
-    }
-    else if(nome == "Bernadette"){
-        condSignal(&bernadetteCond);
-    }
-    else if(nome == "Penny"){
-        condSignal(&pennyCond);
-    }
-    else if(nome == "Stuart"){
-        condSignal(&stuartCond);
-    }
-    else if(nome == "Kripke"){
-        condSignal(&kripkeCond);
-    }
-}
-
-void Monitor::waitPersonagem(string nome){
-    if(nome == "Sheldon"){
-        condWait(&sheldonCond, &this->lock);         
-    }
-    else if(nome == "Howard"){
-        condWait(&howardCond, &this->lock);
-    }
-    else if(nome == "Leonard"){
-        condWait(&leonardCond, &this->lock);
-    }
-    else if(nome == "Amy"){
-        condWait(&amyCond, &this->lock);
-    }
-    else if(nome == "Bernadette"){
-        condWait(&bernadetteCond, &this->lock);
-    }
-    else if(nome == "Penny"){
-        condWait(&pennyCond, &this->lock);
-    }
-    else if(nome == "Stuart"){
-        condWait(&stuartCond, &this->lock);
-    }
-    else if(nome == "Kripke"){
-        condWait(&kripkeCond, &this->lock);
-    }
-
-}
-
-
-
 void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
     
@@ -491,7 +479,7 @@ void Monitor::esperar(Personagem p){
        
 };
 
-string acharCasal(string nome){
+string Monitor::acharCasal(string nome){
     if(nome == "Sheldon"){
         return "Amy";
     }
@@ -514,7 +502,7 @@ string acharCasal(string nome){
     return "";
 }
 
-void acharOCasalEPassarNaFrente(string nome){
+void Monitor::acharOCasalEPassarNaFrente(string nome){
 
     string nomeCasal = acharCasal(nome);
     if (nomeCasal != ""){
@@ -532,7 +520,7 @@ void acharOCasalEPassarNaFrente(string nome){
 }
 
 
-int qtdSheldonAmy (){
+int Monitor::qtdSheldonAmy (){
     auto posicaoAmy = posicaoPersonagemNaFila("Amy");
     auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
     int sheldonAmy = 0;
@@ -544,7 +532,7 @@ int qtdSheldonAmy (){
     return sheldonAmy;
 }
 
-int qtdLeonardPenny(){
+int Monitor::qtdLeonardPenny(){
     auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
     auto posicaoPenny = posicaoPersonagemNaFila("Penny");
     
@@ -558,7 +546,7 @@ int qtdLeonardPenny(){
     return leonardPenny;
 }
 
-int qtdHowardBernadette(){
+int Monitor::qtdHowardBernadette(){
     auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
     auto posicaoHoward = posicaoPersonagemNaFila("Howard");
 
@@ -573,7 +561,7 @@ int qtdHowardBernadette(){
 
 }
 
-void reorganizarFila(){
+void Monitor::reorganizarFila(){
     auto posicaoAmy = posicaoPersonagemNaFila("Amy");
     auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
     auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
@@ -656,7 +644,7 @@ void reorganizarFila(){
 }
 
 
-bool precisaReorganizarFila(){
+bool Monitor::precisaReorganizarFila(){
     int sheldonAmy = qtdSheldonAmy();
     int howardBernadette = qtdHowardBernadette();
     int leonardPenny = qtdLeonardPenny();
@@ -697,7 +685,7 @@ void Monitor::liberar(Personagem p){
 
 };
 
-bool hasDeadLock(){
+bool Monitor::hasDeadLock(){
     int sheldonAmy = qtdSheldonAmy();
     int howardBernadette = qtdHowardBernadette();
     int leonardPenny = qtdLeonardPenny();
@@ -727,3 +715,4 @@ void Monitor::verificar(){
 
     return;
 };
+
