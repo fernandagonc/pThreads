@@ -27,13 +27,16 @@ class Monitor{
         pthread_cond_t kripkeCond;; 
         string primeiroDaFila;
 
-        Monitor();        
+        Monitor();  
+        ~Monitor();      
         void esperar(Personagem p);
         void liberar(Personagem p);
         
         void initCond(pthread_cond_t* cond);
         void condSignal(pthread_cond_t* cond);
         void condWait(pthread_cond_t* cond, pthread_mutex_t* mutex);
+        void destroyMutex();
+        void destroyCond();
         list<string>::iterator posicaoPersonagemNaFila(string nome);
         void passarPessoaNaFrente(string nome);
         void adicionarPersonagemNaFila(string nome);

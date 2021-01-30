@@ -22,6 +22,11 @@ Monitor::Monitor() {
 
 };
 
+Monitor::~Monitor(){
+    destroyMutex();
+    destroyCond();
+}
+
 void printFila(list <string> g) { 
     cout << "FILA: ";
     list <string> :: iterator it; 
@@ -43,6 +48,21 @@ void Monitor::condSignal(pthread_cond_t* cond) {
         perror("condSignal error");
         exit(2);
     }
+}
+
+void Monitor::destroyCond(){
+    pthread_cond_destroy(&amyCond);
+    pthread_cond_destroy(&sheldonCond);
+    pthread_cond_destroy(&pennyCond);
+    pthread_cond_destroy(&leonardCond);
+    pthread_cond_destroy(&howardCond);
+    pthread_cond_destroy(&bernadetteCond);
+    pthread_cond_destroy(&kripkeCond);
+    pthread_cond_destroy(&stuartCond);
+}
+
+void Monitor::destroyMutex(){
+    pthread_mutex_destroy(&lock);
 }
 
 void Monitor::liberarPersonagem(string nome){
@@ -122,17 +142,21 @@ void Monitor::adicionarPersonagemNaFila(string nome){
     auto inicioFila = fila.begin();
 
     if (nome == "Sheldon"){
+        auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
+        bool sheldonNaFila = posicaoSheldon != fila.end();
+        if(sheldonNaFila) return;
+
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
         auto posicaoPenny = posicaoPersonagemNaFila("Penny");
         auto posicaoAmy = posicaoPersonagemNaFila("Amy");
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
         auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
-
+        
         bool pennyNaFila = posicaoPenny != fila.end();
         bool leonardNaFila = posicaoLeonard != fila.end();
         bool amyNaFila = posicaoAmy != fila.end();
         bool howardEBernadetteNaFila = posicaoHoward != fila.end() && posicaoBernadette != fila.end();
-
+        
         if(amyNaFila){
             if(!leonardNaFila || !pennyNaFila){
                     passarPessoaNaFrente("Amy");
@@ -178,6 +202,10 @@ void Monitor::adicionarPersonagemNaFila(string nome){
     }
 
     else if(nome == "Howard"){
+        auto posicaoHoward = posicaoPersonagemNaFila("Howard");
+        bool howardNaFila = posicaoHoward != fila.end();
+        if(howardNaFila) return;
+        
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
         auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
@@ -230,6 +258,10 @@ void Monitor::adicionarPersonagemNaFila(string nome){
         }
     }
     else if(nome == "Leonard"){
+        auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
+        bool leonardNaFila = posicaoLeonard != fila.end();
+        if(leonardNaFila) return;
+
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
         auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
@@ -282,6 +314,10 @@ void Monitor::adicionarPersonagemNaFila(string nome){
         }
     }
     else if (nome == "Amy"){
+        auto posicaoAmy = posicaoPersonagemNaFila("Amy");
+        bool amyNaFila = posicaoAmy != fila.end();
+        if(amyNaFila) return;
+
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
         auto posicaoPenny = posicaoPersonagemNaFila("Penny");
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
@@ -337,6 +373,10 @@ void Monitor::adicionarPersonagemNaFila(string nome){
 
     }
     else if(nome == "Bernadette"){
+        auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
+        bool bernadetteNaFila = posicaoBernadette != fila.end();
+        if(bernadetteNaFila) return;
+
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
         auto posicaoLeonard = posicaoPersonagemNaFila("Leonard");
@@ -389,6 +429,10 @@ void Monitor::adicionarPersonagemNaFila(string nome){
         }
     }
     else if(nome == "Penny"){
+        auto posicaoPenny = posicaoPersonagemNaFila("Penny");
+        bool pennyNaFila = posicaoPenny != fila.end();
+        if(pennyNaFila) return;
+
         auto posicaoSheldon = posicaoPersonagemNaFila("Sheldon");
         auto posicaoBernadette = posicaoPersonagemNaFila("Bernadette");
         auto posicaoHoward = posicaoPersonagemNaFila("Howard");
@@ -441,9 +485,13 @@ void Monitor::adicionarPersonagemNaFila(string nome){
         }
     }
     else if(nome == "Stuart"){
+        auto posicaoStuart = posicaoPersonagemNaFila("Stuart");
+        bool stuartNaFila = posicaoStuart != fila.end();
+        if(stuartNaFila) return;
+        
         auto posicaoKripke = posicaoPersonagemNaFila("Kripke");
 
-        if(posicaoKripke == fila.end()){
+        if(posicaoKripke == fila.end()){          
             fila.push_back(nome);
         }
         else{
@@ -452,6 +500,9 @@ void Monitor::adicionarPersonagemNaFila(string nome){
 
     }
     else if(nome == "Kripke"){
+        auto posicaoKripke = posicaoPersonagemNaFila("Kripke");
+        bool kripkeNaFila = posicaoKripke != fila.end();
+        if(kripkeNaFila) return;
         fila.push_back(nome);
     }
     else{
@@ -464,8 +515,6 @@ void Monitor::esperar(Personagem p){
     cout << p.nome << " quer usar o forno \n";
     
     adicionarPersonagemNaFila(p.nome);
-    printFila(fila);
-
     if (pthread_mutex_lock(&this->lock) != 0) {
         cout << "pthread_mutex_lock error";
         exit(2);
@@ -674,8 +723,6 @@ void Monitor::liberar(Personagem p){
         reorganizarFila();
     acharOCasalEPassarNaFrente(p.nome);
     primeiroDaFila = fila.front();
-    printFila(fila);
-
     pthread_mutex_unlock(&this->lock); 
     
     if(primeiroDaFila != ""){

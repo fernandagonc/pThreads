@@ -2,12 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-#include <thread>
 #include <iostream>
 #include <algorithm> 
 #include "personagem.hpp"
 #include "monitor.hpp"
 #include <unistd.h>
+#include <cstdlib>
+
 
 using namespace std;
 
@@ -33,26 +34,18 @@ void * threadHandler (void * pointer){
 
 
 pthread_t criarThread (Personagem personagem) {
-    int status;
     Personagem p = personagem;
     Personagem * pointer;
     pointer = &p;
     pthread_t id;
 
-    status = pthread_create(&id, NULL, &threadHandler, (void *) pointer);
-    if (status < 0) {
+    if (pthread_create(&id, NULL, &threadHandler, (void *) pointer) < 0) {
         cout << "Erro ao criar a thread.";
         return -1;
     }
-
-    cout << personagem.nome << " thread criada\n";
-
-
     sleep(0.5);
     return id;
 };
-
-
 
 void joinThread(pthread_t id){
     if (pthread_join(id, NULL) < 0) {
@@ -87,7 +80,8 @@ void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
 }
 
 int main(int argc, char *argv[]){
-    
+    srand (time (0));
+
     if(argc < 2){
         cout << "Especifique número de vezes para os personagens usarem o forno.";
         exit(1);
@@ -107,8 +101,8 @@ int main(int argc, char *argv[]){
     else{
         sleep(0.5);
     }
-
-    // random_shuffle(personagens, personagens + 8);
+    
+    random_shuffle(personagens, personagens + 8);
 
     for(int i=0; i < 8; i++){
         personagens[i].id = criarThread(personagens[i]);
