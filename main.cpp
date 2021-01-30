@@ -43,7 +43,7 @@ pthread_t criarThread (Personagem personagem) {
         cout << "Erro ao criar a thread.";
         return -1;
     }
-    sleep(0.5);
+    sleep(1);
     return id;
 };
 
@@ -68,7 +68,10 @@ void * threadRaj (void * pointer){
 
 void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
     Personagem novo;
-    string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
+    //string nomes[8] = {"Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Stuart", "Kripke"};
+    //string nomes[8] = {"Stuart", "Leonard", "Sheldon", "Howard", "Kripke", "Amy", "Penny", "Bernadette"};
+    string nomes[8] = {"Stuart", "Sheldon", "Amy", "Leonard", "Penny", "Howard", "Bernadette", "Kripke"};
+    //string nomes[8] = {"Stuart", "Leonard", "Sheldon", "Howard", "Amy", "Penny", "Bernadette", "Kripke"};
 
     for(int i = 0; i < 8; i++){
     
@@ -80,8 +83,7 @@ void inicializarPersonagens(int nroVezesUsoForno, Personagem personagens[]){
 }
 
 int main(int argc, char *argv[]){
-    srand (time (0));
-
+    srand(time(0));
     if(argc < 2){
         cout << "Especifique número de vezes para os personagens usarem o forno.";
         exit(1);
@@ -101,8 +103,8 @@ int main(int argc, char *argv[]){
     else{
         sleep(0.5);
     }
-    
-    random_shuffle(personagens, personagens + 8);
+        
+    random_shuffle(personagens, personagens+8);
 
     for(int i=0; i < 8; i++){
         personagens[i].id = criarThread(personagens[i]);

@@ -23,7 +23,7 @@ Personagem::Personagem(string nome, int nroVezesUsoForno, pthread_t id){
 
 void Personagem::esquentarAlgo() {
     cout << this->nome << " começa a esquentar algo \n";
-    sleep(1);
+    sleep(1.5);
 }
 
 void Personagem::comer() {
